@@ -1,11 +1,8 @@
 #!/bin/sh
 
-# args
-vm='"develop"'
+CURRENT_RUBY_VERSION=`ruby -v | awk '{print $2}'`
 
-current_ruby_version=`ruby -v | awk '{print $2}'`
-
-if [ $current_ruby_version != '2.2.3p173' ]; then
+if [ $CURRENT_RUBY_VERSION != '2.2.3p173' ]; then
   echo "itamae depends ruby install..."
   # mkdir -p ~/rpmbuild/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
   # (cd ~/rpmbuild/SOURCES && curl -LO http://cache.ruby-lang.org/pub/ruby/2.2/ruby-2.2.3.tar.gz)
@@ -14,17 +11,24 @@ if [ $current_ruby_version != '2.2.3p173' ]; then
   # sudo yum install -y gdbm-devel libyaml-devel libffi-devel
   # rpmbuild -ba rpmbuild/SPECS/ruby22x.spec
   curl -s https://packagecloud.io/install/repositories/pastelInc/ruby223/script.rpm.sh | sudo bash
-  sudo yum remove -y ruby ruby-augeas
-  sudo yum install -y ruby223
+  yum remove -y ruby-libs ruby-augeas ruby-shadow
+  yum install -y ruby223
 fi
 
 # itamae install
 if ! ( gem contents itamae ) < /dev/null > /dev/null 2>&1; then
   echo "itamae install..."
-  sudo gem install itamae
+  gem install itamae
 fi
+
+# args
+vm='develop'
 
 # exec itamae
 cd /vagrant
-echo {'"role"': ${vm}} > node.json
-sudo itamae local --node-json=node.json bootstrap.rb
+cat <<EOS > node.json
+{
+  "role": "${vm}"
+}
+EOS
+itamae local --node-json=node.json bootstrap.rb

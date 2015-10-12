@@ -4,7 +4,6 @@ module RecipeHelper
   end
 end
 
-# Note: Ruby1.9.3でincludeがNot found methodエラー
 Itamae::Recipe::EvalContext.include(RecipeHelper)
 
 include_recipe File.join("roles", node[:role], "default.rb")
