@@ -22,13 +22,20 @@ if ! ( gem contents itamae ) < /dev/null > /dev/null 2>&1; then
 fi
 
 # args
-vm='develop'
+VM='develop'
+VERSION='v4.0.0'
 
 # exec itamae
 cd /vagrant
 cat <<EOS > node.json
 {
-  "role": "${vm}"
+  "role": "${VM}",
+  "nodebrew": {
+    "versions": {
+      "${VERSION}": []
+    },
+    "use": "${VERSION}"
+  }
 }
 EOS
 itamae local --node-json=node.json bootstrap.rb
