@@ -8,7 +8,7 @@ package 'postgresql94-contrib'
 
 execute 'initdb' do
   command 'service postgresql-9.4 initdb -D /var/lib/psql/9.4/data --no-locale'
-  not_if 'ls /var/lib/pgsql/9.4/data/pg*'
+  not_if 'ls /var/lib/pgsql/9.4/data/postgresql.conf'
 end
 
 service 'postgresql-9.4' do
@@ -21,5 +21,7 @@ execute 'createuser' do
 end
 
 template '/var/lib/pgsql/9.4/data/pg_hba.conf' do
+  owner 'postgres'
+  group 'postgres'
   notifies :reload, 'service[postgresql-9.4]'
 end
